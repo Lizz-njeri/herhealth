@@ -1,2 +1,2 @@
 # herhealth
-This is a healtjcare web aapplication focused on women's reproductive health.
+This is a healthcare web application focused on women's reproductive health.
