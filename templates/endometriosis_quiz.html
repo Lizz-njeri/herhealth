@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endometriosis Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Endometriosis Quiz</h1>
+    </header>
+
+    <form method="POST">
+        <p>Do you experience pelvic pain?</p>
+        <input type="radio" name="pelvic pain" value="yes"> Yes
+        <input type="radio" name="pelvic pain" value="no"> No
+
+        <p>Do you have very painful periods?</p>
+        <input type="radio" name="painful periods" value="yes"> Yes
+        <input type="radio" name="painful periods" value="no"> No
+
+        <p>Do you experience heavy menstrual flow?</p>
+        <input type="radio" name="heavy menstrual flow" value="yes"> Yes
+        <input type="radio" name="heavy menstrual flow" value="no"> No
+
+        <p>Do you experience pain during intercourse?</p>
+        <input type="radio" name="pain during intercourse" value="yes"> Yes
+        <input type="radio" name="pain during intercourse" value="no"> No
+
+        <p>Do you have difficulty getting pregnant?</p>
+        <input type="radio" name="difficulty getting pregnant" value="yes"> Yes
+        <input type="radio" name="difficulty getting pregnant" value="no"> No
+
+        <p>Enter your location (city or zip code):</p>
+        <input type="text" name="location" required>
+        
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

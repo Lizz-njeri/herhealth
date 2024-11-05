@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCOS Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>PCOS Quiz</h1>
+    </header>
+
+    <form method="POST">
+        <p>Do you have irregular periods?</p>
+        <input type="radio" name="irregular periods" value="yes"> Yes
+        <input type="radio" name="irregular periods" value="no"> No
+
+        <p>Do you have difficulty losing weight?</p>
+        <input type="radio" name="difficulty losing weight" value="yes"> Yes
+        <input type="radio" name="difficulty losing weight" value="no"> No
+
+        <p>Do you have excessive hair growth on your face or body?</p>
+        <input type="radio" name="excessive hair growth" value="yes"> Yes
+        <input type="radio" name="excessive hair growth" value="no"> No
+
+        <p>Do you experience acne?</p>
+        <input type="radio" name="acne" value="yes"> Yes
+        <input type="radio" name="acne" value="no"> No
+
+        <p>Do you have thinning hair?</p>
+        <input type="radio" name="thinning hair" value="yes"> Yes
+        <input type="radio" name="thinning hair" value="no"> No
+
+        <p>Enter your location:</p>
+        <input type="text" name="location" required>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

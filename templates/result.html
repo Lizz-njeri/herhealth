@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result - {{ condition }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Quiz Results for {{ condition }}</h1>
+    </header>
+
+    <h3>Your score: {{ score }} / 5</h3>
+    <p>{{ recommendation }}</p>
+
+    <h4>Healthcare Providers in {{ location }}:</h4>
+    <ul>
+        {% for provider in providers %}
+            <li>{{ provider }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>

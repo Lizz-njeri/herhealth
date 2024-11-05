@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HerHealth - Women's Health Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to HerHealth</h1>
+        <p>Your personal women's health assistant</p>
+    </header>
+    
+    <div class="quiz-options">
+        <a href="{{ url_for('endometriosis_quiz') }}" class="quiz-button">Endometriosis Quiz</a>
+        <a href="{{ url_for('pcos_quiz') }}" class="quiz-button">PCOS Quiz</a>
+        <a href="{{ url_for('breast_exam') }}" class="quiz-button">Breast Exam</a>
+    </div>
+</body>
+</html>

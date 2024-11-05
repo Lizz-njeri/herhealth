@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Self-Examination Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>How to Perform a Breast Self-Examination</h1>
+    </header>
+
+    <section>
+        <h2>Step 1: Visual Inspection</h2>
+        <p>Stand in front of a mirror and look for any visible changes such as lumps, swelling, or skin changes. Raise your arms above your head and inspect again for any changes.</p>
+
+        <h2>Step 2: Manual Inspection</h2>
+        <p>Use the pads of your fingers to examine your breasts in a circular motion. Start from the outermost part of the breast and work your way in. Do this while standing up and lying down.</p>
+
+        <h2>Step 3: Check for Abnormalities</h2>
+        <p>Pay attention to any lumps, unusual pain, skin changes, or nipple discharge. If you find anything unusual, consult with a healthcare professional immediately.</p>
+
+        <form method="POST">
+            <h3>Did you notice any of the following abnormalities during your self-exam?</h3>
+
+            <p>Did you feel any lumps in your breasts?</p>
+            <input type="radio" name="lump" value="yes" required> Yes
+            <input type="radio" name="lump" value="no"> No
+
+            <p>Did you experience any unusual pain in your breasts?</p>
+            <input type="radio" name="pain" value="yes" required> Yes
+            <input type="radio" name="pain" value="no"> No
+
+            <p>Did you notice any skin changes (e.g., redness, dimpling)?</p>
+            <input type="radio" name="skin_change" value="yes" required> Yes
+            <input type="radio" name="skin_change" value="no"> No
+
+            <p>Did you see any nipple discharge (other than breast milk)?</p>
+            <input type="radio" name="discharge" value="yes" required> Yes
+            <input type="radio" name="discharge" value="no"> No
+
+            <p>Enter your location (city or zip code):</p>
+            <input type="text" name="location" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <footer>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </footer>
+</body>
+</html>
