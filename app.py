@@ -6,19 +6,19 @@ import os
 app = Flask(__name__)
 
 # Set up Google Maps API
-# gmaps = googlemaps.Client(key='YOUR_GOOGLE_MAPS_API_KEY')  # Replace with your actual Google Maps API Key
+gmaps = googlemaps.Client(key='YOUR_GOOGLE_MAPS_API_KEY')  
 
 # Configure the Gemini API
-genai.configure(api_key="")  # Replace with your actual Gemini API key
+genai.configure(api_key="AIzaSyAd3KJ0mXHGb7MJ-a-vVci01OR-JEmx_tA")  
 
 # Function to analyze quiz responses using Google Gemini
 def analyze_quiz_with_gemini(answers):
-    # Prepare the user's answers into a prompt for the Gemini model
+    
     user_input = " ".join(answers)
     prompt = f"Based on the following answers to a health quiz: {user_input}, what would be your recommendation for further action?"
 
     # Generate a response from Gemini
-    model = genai.GenerativeModel("gemini-1.5-flash")  # Use the appropriate model
+    model = genai.GenerativeModel("gemini-1.5-flash")  
     response = model.generate_content(prompt)
 
     return response.text
@@ -41,7 +41,7 @@ def endometriosis_quiz():
             request.form.get("difficulty getting pregnant")
         ]
         
-        # Analyze answers using Google Gemini
+        
         recommendation = analyze_quiz_with_gemini(answers)
 
         # Get user's location
