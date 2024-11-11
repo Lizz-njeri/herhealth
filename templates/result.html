@@ -11,15 +11,10 @@
         <h1>Quiz Results for {{ condition }}</h1>
     </header>
 
-    <h3>Your score: {{ score }} / 5</h3>
+    
     <p>{{ recommendation }}</p>
 
-    <h4>Healthcare Providers in {{ location }}:</h4>
-    <ul>
-        {% for provider in providers %}
-            <li>{{ provider }}</li>
-        {% endfor %}
-    </ul>
+    
 
     <a href="{{ url_for('home') }}">Back to Home</a>
 </body>

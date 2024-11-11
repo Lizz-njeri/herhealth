@@ -1,34 +1,54 @@
-from flask import Flask, render_template, request, redirect, url_for
-import googlemaps
+from flask import Flask, render_template, request, redirect, url_for, session
 import google.generativeai as genai
 import os
+from IPython.display import Markdown
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # Required for session management
 
-# Set up Google Maps API
-gmaps = googlemaps.Client(key='YOUR_GOOGLE_MAPS_API_KEY')  
+# Gemini API
+genai.configure(api_key="AIzaSyAd3KJ0mXHGb7MJ-a-vVci01OR-JEmx_tA")
 
-# Configure the Gemini API
-genai.configure(api_key="AIzaSyAd3KJ0mXHGb7MJ-a-vVci01OR-JEmx_tA")  
+# Define questions for each quiz
+questions_endometriosis = [
+    "Do you experience pelvic pain?",
+    "Do you have painful periods?",
+    "Do you have heavy menstrual flow?",
+    "Do you experience pain during intercourse?",
+    "Do you have difficulty getting pregnant?"
+]
+
+questions_pcos = [
+    "Do you have irregular periods?",
+    "Do you have difficulty losing weight?",
+    "Do you experience excessive hair growth?",
+    "Do you have acne?",
+    "Do you experience thinning hair?"
+]
+
+questions_breast_exam = [
+    "Do you notice any lumps in your breast?",
+    "Do you feel any pain in your breast?",
+    "Have you noticed any skin changes in your breast?",
+    "Do you have any discharge from your nipple?"
+]
 
 # Function to analyze quiz responses using Google Gemini
-def analyze_quiz_with_gemini(answers):
+def analyze_quiz_with_gemini(questions, answers):
+    # Create a prompt that includes both the questions and answers
+    prompt = "Based on the following answers to a health quiz, provide recommendations for further action:\n"
+    for question, answer in zip(questions, answers):
+        prompt += f"Question: {question} - Answer: {answer}\n"
     
-    user_input = " ".join(answers)
-    prompt = f"Based on the following answers to a health quiz: {user_input}, what would be your recommendation for further action?"
-
     # Generate a response from Gemini
-    model = genai.GenerativeModel("gemini-1.5-flash")  
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content(prompt)
-
     return response.text
 
-# Endpoint for the homepage
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Endpoint for the Endometriosis quiz
 @app.route('/endometriosis', methods=['GET', 'POST'])
 def endometriosis_quiz():
     if request.method == 'POST':
@@ -41,18 +61,21 @@ def endometriosis_quiz():
             request.form.get("difficulty getting pregnant")
         ]
         
+        # Debug: Log answers to verify
+        print(f"Endometriosis answers: {answers}")
         
-        recommendation = analyze_quiz_with_gemini(answers)
-
-        # Get user's location
-        location = request.form['location']
+        # Store the answers and questions in session
+        session['answers'] = answers
+        session['questions'] = questions_endometriosis
+        # Analyze answers using Google Gemini
+        recommendation = analyze_quiz_with_gemini(questions_endometriosis, answers)
+        session['recommendation'] = recommendation
+        session['condition'] = "Endometriosis"
         
-        # Redirect to results page with the recommendation
-        return redirect(url_for('result', location=location, recommendation=recommendation, condition="Endometriosis"))
+        return redirect(url_for('result'))
 
     return render_template('endometriosis_quiz.html')
 
-# Endpoint for the PCOS quiz
 @app.route('/pcos', methods=['GET', 'POST'])
 def pcos_quiz():
     if request.method == 'POST':
@@ -65,66 +88,69 @@ def pcos_quiz():
             request.form.get("thinning hair")
         ]
         
-        # Analyze answers using Google Gemini
-        recommendation = analyze_quiz_with_gemini(answers)
-
-        # Get user's location
-        location = request.form['location']
+        # Debug: Log answers to verify
+        print(f"PCOS answers: {answers}")
         
-        # Redirect to results page with the recommendation
-        return redirect(url_for('result', location=location, recommendation=recommendation, condition="PCOS"))
+        # Store the answers and questions in session
+        session['answers'] = answers
+        session['questions'] = questions_pcos
+        # Analyze answers using Google Gemini
+        recommendation = analyze_quiz_with_gemini(questions_pcos, answers)
+        session['recommendation'] = recommendation
+        session['condition'] = "PCOS"
+        
+        return redirect(url_for('result'))
 
     return render_template('pcos_quiz.html')
 
-# Endpoint for the Breast Self-Exam quiz
 @app.route('/breast-exam', methods=['GET', 'POST'])
 def breast_exam():
     if request.method == 'POST':
         # Get responses from the BSE quiz
-        abnormalities = [
+        answers = [
             request.form.get("lump"),
             request.form.get("pain"),
             request.form.get("skin_change"),
             request.form.get("discharge"),
         ]
         
-        # Analyze the quiz answers using Google Gemini
-        recommendation = analyze_quiz_with_gemini(abnormalities)
-
-        # Get user's location
-        location = request.form['location']
+        # Debug: Log answers to verify
+        print(f"Breast exam answers: {answers}")
         
-        # Redirect to results page with the recommendation
-        return redirect(url_for('result', location=location, recommendation=recommendation, condition="Breast Health"))
+        # Store the answers and questions in session
+        session['answers'] = answers
+        session['questions'] = questions_breast_exam
+        # Analyze the quiz answers using Google Gemini
+        recommendation = analyze_quiz_with_gemini(questions_breast_exam, answers)
+        session['recommendation'] = recommendation
+        session['condition'] = "Breast Health"
+        
+        return redirect(url_for('result'))
 
     return render_template('breast_exam.html')
 
-# Endpoint for displaying the result and healthcare provider recommendations
 @app.route('/result')
 def result():
-    location = request.args.get('location')
-    recommendation = request.args.get('recommendation')
-    condition = request.args.get('condition')
+    # Retrieve the recommendation, condition, questions, and answers from the session
+    recommendation = session.get('recommendation')
+    condition = session.get('condition')
+    questions = session.get('questions')
+    answers = session.get('answers')
+
+    # Debug: Log session data to verify
+    print(f"Session Data: recommendation={recommendation}, condition={condition}, questions={questions}, answers={answers}")
     
-    # Get the nearest healthcare providers using Google Maps API
-    providers = find_nearby_providers(location)
+    # Ensure the data exists in session
+    if not all([recommendation, condition, questions, answers]):
+        return "Error: Missing data, please complete the quiz again."
 
-    return render_template('result.html', location=location, providers=providers, recommendation=recommendation, condition=condition)
-
-# Function to find nearby healthcare providers using Google Maps API
-def find_nearby_providers(location):
-    # Use Google Maps Geocoding API to get the coordinates of the location
-    geocode_result = gmaps.geocode(location)
-    if geocode_result:
-        # Get the latitude and longitude of the location
-        lat, lng = geocode_result[0]['geometry']['location'].values()
-        # Search for nearby healthcare providers (e.g., hospitals)
-        places_result = gmaps.places_nearby((lat, lng), radius=5000, type='hospital')
-        
-        # Return the names of nearby providers (simplified)
-        return [place['name'] for place in places_result.get('results', [])]
-    else:
-        return []
+    # Zip the questions with their corresponding answers
+    quiz_data = list(zip(questions, answers))
+    
+    return render_template('result.html', 
+                           recommendation=recommendation, 
+                           condition=condition, 
+                           quiz_data=quiz_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
